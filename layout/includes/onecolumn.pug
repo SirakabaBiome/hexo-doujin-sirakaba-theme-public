@@ -1,0 +1,11 @@
+extends layout.pug
+
+block content
+    include header/navbar.pug
+    div(class="noenter-name" style="display:none")
+        .container
+            h2 利用規約に同意しないと読めません
+            include parts/agetos.pug
+    div(class="main-content")
+        div(class="content" style="display:none;")
+            block page_content

@@ -1,0 +1,38 @@
+- var mode = "YZ2"
+if page.yumetype
+    - mode = page.yumetype
+
+details 
+    summary 名前変換フォーム
+    .alice-form
+        .container
+            p.center ※名前変換しなくても読めます
+            if is_home()
+                span(class=mode)
+                    input(class="names0" type="text")
+                .submit 
+                    input(id="enter" + mode type="button" value="OK" class="btn z-depth-0")
+                    input(id="delete" + mode  type="button" value="NG" class="btn z-depth-0")
+            else
+                    span(class=mode)
+                        .input-field
+                            if mode == "YZ1"
+                                .name-form
+                                    span 苗字：
+                                    input(class="names1" type="text")
+                                .name-form
+                                    span 名前：
+                                    input(class="names2" type="text")
+                            else if mode == "YZ2"
+                                .name-form
+                                    span 名前：
+                                    input(class="names1" type="text")
+                                .name-form
+                                    span ミドルネーム：
+                                    input(class="names2" type="text")
+                                .name-form
+                                    span 苗字：
+                                    input(class="names3" type="text")
+                    .submit 
+                        input(id="enter" + mode type="button" value="OK" class="btn z-depth-0")
+                        input(id="delete" + mode  type="button" value="NG" class="btn z-depth-0")

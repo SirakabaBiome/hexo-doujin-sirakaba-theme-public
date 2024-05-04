@@ -1,0 +1,59 @@
+.recent-post
+    .container
+        - var page_title 
+        if page.category
+            - page_title = page.category 
+        if page.tag
+            - page_title = page.tag
+        - var dict_page
+        if site.pages.data.find(element => element.title === page_title)
+            - dict_page = site.pages.data.filter(element => element.title === page_title)[0]
+        if dict_page != undefined
+            .tag-about 
+                .tag-thumbnail
+                    a(href=url_for(dict_page.path))
+                        if dict_page.cover 
+                            img(src=url_for(dict_page.cover.replace(".png",".webp")), alt="")
+                .tag-description
+                    h1= page_title 
+                    p= truncate(strip_html(dict_page.excerpt),{length:50})
+                    a(href=url_for(dict_page.path)) 解説を読む 
+        else 
+            h1= page_title
+        hr
+        div(class="row" style="gap:10px")
+            each post in page.posts.data 
+                div(class="col s12 m6")
+                    - var post_type = ["ブログ", "#999"]
+                    if post.layout == "illust"
+                        - post_type = ["イラスト", "var(--primary-color)"]
+                    if post.layout == "novel"
+                        - post_type = ["小説", "var(--font-link-color)"]
+                    if post.layout == "comic_post"
+                        - post_type = ["漫画","var(--secondary-color)"]
+                    span(class="post-type" style="background-color:" + post_type[1])= post_type[0]
+                    .post 
+                        - var aspect = ""
+                        if post.layout == "illust"
+                            - aspect = "aspect-ratio: 1 / 1"
+                        if post.layout != "post"
+                            div(class="post-cover" style=aspect)
+                                a(href=url_for(post.path)) 
+                                    if post.cover 
+                                        img(src=url_for(post.cover.replace(".png",".webp")), alt="", srcset="")
+                                    else 
+                                        p NO IMG
+                        .post-description
+                            a(href=url_for(post.path)) 
+                                h3= post.title
+                            p= truncate(strip_html(post.excerpt),{length:50})
+                            if post.tags
+                                .tag-list
+                                    ul 
+                                        each tag in post.tags.data
+                                            li 
+                                                a(href=url_for(tag.path))= "# " + tag.name 
+                            .post-date
+                                span= full_date(post.date,'YYYY年 MMMM')
+                            a(href=url_for(post.path)) 続きを読む 
+        include pagenator.pug

@@ -1,0 +1,6 @@
+if page.categories
+    include series.pug
+details
+    summary 最近の記事
+    .container
+        != list_posts({"amout": 5})

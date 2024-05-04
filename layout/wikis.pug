@@ -1,0 +1,12 @@
+extends includes/onecolumn.pug
+
+block page_content 
+    if theme.wiki != null && theme.wiki != undefined 
+        .wikis
+            .container
+                h1= page.title
+                ul 
+                    each url, label in theme.wiki 
+                        li
+                            .btn
+                                a(href=url_for(url) class="")= label

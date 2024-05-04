@@ -1,0 +1,54 @@
+.post-pagenator
+    hr
+    - var series_data
+    - var post_cat = page.categories.data[0]
+    if post_cat != undefined 
+        - series_data = site.categories.findOne({"name": post_cat.name}).posts.sort('date', 1)
+        - var s_data_list = series_data.data
+        - var s_prev
+        - var s_next
+        - var count = 0
+        each post in s_data_list
+            if post.path == page.path 
+                - break 
+            - count += 1
+        if count > 0
+            - s_prev = s_data_list[count - 1]
+        if count < s_data_list.length
+            - s_next = s_data_list[count + 1]
+
+        a(href=url_for(post_cat.path)) 
+            h2.center= post_cat.name + "シリーズ"
+        .container
+            .row 
+                div(class="col s6")
+                    p 次の話
+                        br
+                        if s_next
+                            a(href=url_for(s_next.path))= "< " + s_next.title
+                        else 
+                            | この話は最新です
+                div(class="col s6 right-align")
+                    p 前の話
+                        br
+                        if s_prev
+                            a(href=url_for(s_prev.path))=  s_prev.title  + " >"
+                        else 
+                            | この話は一番古いです
+        hr
+    .container
+        .row
+            div(class="col s6")
+                p 次の話
+                    br
+                    if page.prev
+                        a(href=url_for(page.prev.path))= "< " + page.prev.title
+                    else 
+                        | この話は最新です
+            div(class="col s6 right-align")
+                p 次の話
+                    br
+                    if page.next
+                        a(href=url_for(page.next.path))= page.next.title + " >"
+                    else 
+                        | この話は一番古いです

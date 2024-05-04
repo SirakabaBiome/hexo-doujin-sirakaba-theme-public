@@ -1,0 +1,18 @@
+p 
+    | このサイトにはライトノベル程度の過激な表現が含まれています。
+    br
+    a(href=url_for("/tos/")) 利用規約
+    | に同意する良識を持つ方はユーザー名を登録してください。
+    br
+    | ※クッキーを利用しているためサーバーには送信されません。
+
+.alice-form
+    .user-enter
+        span(class="YZ1")
+            input(class="names0" type="text")
+        .submit 
+                input(id="enterYZ1" type="button" value="同意します" class="btn z-depth-0")
+                - var url = "https://www.google.com/"
+                if theme.no_jump != undefined && theme.no_jump != null 
+                    - url = theme.no_jump 
+                a(href=url_for(url) class="btn z-depth-0") 嫌どす

@@ -1,0 +1,21 @@
+- var series_data
+- var post_cat = page.categories.data[0]
+if post_cat != undefined 
+    - series_data = site.categories.findOne({"name": post_cat.name}).posts.sort('date', 1)
+    - series_data = series_data.data
+
+// https://github.com/hexojs/hexo/issues/2975
+if post_cat != undefined 
+    details(open)
+        summary= post_cat.name + "シリーズ"
+        .container
+            .series-widget
+                ul
+                    - var count = 0
+                    each post in series_data
+                        - count += 1
+                        li
+                            if post.path == page.path 
+                                a(href=url_for(post.path) class="current_post")= "#" + String(count) + " " + post.title
+                            else
+                                a(href=url_for(post.path))= "#" + String(count) + " " + post.title

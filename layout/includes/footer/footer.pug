@@ -1,0 +1,23 @@
+footer.page-footer
+    .container
+        span= '(c) 2024- ' + config.author
+        br
+        span 無断転載・引用・機械学習・利用禁止。
+        br
+        span 
+            a(href=url_for("/tos")) 利用規約
+        span をよんでください。 
+        ul
+            each url, label in theme.menu
+                li
+                    a(href=url_for(url) class="navbar-item")= label
+- var ver = full_date(new Date()).replace(/[^0-9]/g,'')
+if theme.scripts !== undefined && theme.scripts.length > 0
+    each url in theme.scripts
+        if url.indexOf("?Ver=") > -1
+            - url += ver
+        script(src=url_for(url))
+    if page.path == "tos/index.html"
+        script(src=url_for("/js/tos.js"))
+if page.layout == "novel"
+    script const viewerApp = new SNViewerAppClass();

@@ -1,0 +1,85 @@
+extends includes/onecolumn.pug
+
+block page_content
+    .container
+        h1= page.title
+        - var all_character_list = site.pages.data.filter(element => element.layout === "character")
+        - all_character_list = all_character_list.filter(element=> element.path.split("/")[0] === page.path.split("/")[0])
+        - var group_list = []
+        each post in all_character_list 
+            - group_list.push(post.group)
+            - group_list = Array.from(new Set(group_list))
+        if all_character_list 
+            input( type="text" id="myCharasInput" onkeyup="textSearch('input#myCharasInput','.wiki-content-lists','.searchable','p.character-name')" placeholder="検索したい言葉を入力してください。")
+            .wiki-content-lists
+                if page.path.split("/")[0] === "characters"
+                    .all-characters
+                        each group in group_list
+                            details(open)
+                                summary= group
+                                div(class="character-list" style="gap:5px;" id="myChara")
+                                    if all_character_list.filter(element => element.group === group)
+                                        - var character_list = all_character_list.filter(element => element.group === group).sort((a, b) => {const nameA = a.path.toUpperCase();const nameB = b.path.toUpperCase();if (nameA < nameB) {return -1;}if (nameA > nameB) {return 1;}return 0;})
+                                        each character in character_list 
+                                            div(class="grow-1   searchable")
+                                                div(class="character-card")
+                                                    a(href=url_for(character.path)) 
+                                                        .card
+                                                            .thumbnail
+                                                                if character.cover 
+                                                                    img(src=url_for(character.cover.replace(".png",".webp")), alt="")
+                                                                else 
+                                                                    span NO IMG
+                                                            p.character-name= character.title
+                                                                if character.hiragana
+                                                                    span(style="display:none;")= character.hiragana 
+                else
+                    .wiki-content-lists
+                        .all-words 
+                            each group in group_list
+                                details(open)
+                                    summary= group
+                                    if all_character_list.filter(element => element.group === group)
+                                        - var character_list = all_character_list.filter(element => element.group === group).sort((a, b) => {const nameA = a.path.toUpperCase();const nameB = b.path.toUpperCase();if (nameA < nameB) {return -1;}if (nameA > nameB) {return 1;}return 0;})
+                                        - var list = []
+                                        each character in character_list
+                                            - var paths = character.path.split("/")
+                                            - var html = paths.pop()
+                                            - var name = []
+                                            - var process = []
+                                            - process.push
+                                            each path in paths 
+                                                - process.push(path)
+                                                - var now_path = process.join("/") + "/index.html"
+                                                - var post = character_list.find(element => element.path === now_path)
+                                                if post != null && post != undefined
+                                                    - name.push(post.title)
+                                                else 
+                                                    - name.push(path)
+                                            - name.push(character.title)
+                                            - name.shift()
+                                            if name[name.length - 2] === character.title
+                                                - name.pop()
+                                            - name = name.join(" > ")
+                                            - sort_path = character.path 
+                                            if html === "index.html"
+                                                - sort_path = paths.join("/") + "/0.html"
+                                            - list.push({"name":name,"post":character,"path":sort_path})
+                                        - list = list.sort((a, b) => {const nameA = a.path.toUpperCase();const nameB = b.path.toUpperCase();if (nameA < nameB) {return -1;}if (nameA > nameB) {return 1;}return 0;})
+                                        each character in list
+                                            - var post = character.post
+                                            - var pankuzu = character.name.split(" > ")
+                                            - var name = pankuzu.pop()
+                                            if pankuzu.length > 0
+                                                - pankuzu = pankuzu.join(" > ") + " > "
+                                            .searchable
+                                                div(class="word-card")
+                                                    if pankuzu != null 
+                                                        p.pankuzu= pankuzu
+                                                    else 
+                                                        p.pankuzu
+                                                    a(href=url_for(post.path)) 
+                                                        p.character-name= name
+                                                            if post.hiragana
+                                                                span(style="display:none;")= post.hiragana 
+                                                        

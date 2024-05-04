@@ -1,0 +1,207 @@
+extends includes/onecolumn.pug
+
+block page_content 
+    -  var group_page_list = site.pages.data.filter(element => element.path.split("/")[0] === page.path.split("/")[0]) // 親ページが同じもののみ
+    .character-page
+        a(href=url_for("/" + page.path.split("/")[0]))
+            p ＜　一覧へ戻る
+        - var paths = page.path.split("/")
+        - var name = []
+        - var process = []
+        each path in paths 
+            - process.push(path)
+            - var now_path = process.join("/") + "/index.html"
+            - var post = group_page_list.find(element => element.path === now_path)
+            if post != null && post != undefined
+                - name.push({"name": post.title,"path": post.path})
+            else 
+                - name.push({"name":path})
+        - name.pop()
+        .pankuzu 
+            - var count = 0
+            each pankuzu in name
+                if pankuzu.path != null && pankuzu.path != undefined 
+                    a(href=url_for(pankuzu.path))
+                        span= pankuzu.name 
+                else 
+                    span= pankuzu.name  
+                span= " > " 
+        .row 
+            div(class="col s12 m3")
+                .sidebar 
+                        - var post_base_path = page.path.split("/")
+                        - post_base_path.pop()
+                        - var parent_post_path = post_base_path
+                        - parent_post_path = parent_post_path.join("/") + "/index.html"
+                        - var parent_post = group_page_list.find(element => element.path === parent_post_path)
+                        if parent_post != undefined && parent_post.path != page.path 
+                            - var post = parent_post
+                            details 
+                                summary  親記事
+                                .container
+                                    a(href=url_for(post.path))= post.title
+                        - var siblings_post = group_page_list.filter(element => element.path.split("/").length === element.path.split("/").length) // 兄弟ページを探す
+                        - siblings_post = siblings_post.filter((element) => {var path = element.path.split("/"); var html = path.pop(); if(html != "index.html"){var page_path = page.path.split("/"); page_path.pop(); page_path = page_path.join("/"); path = path.join("/"); if(page_path == path){return element}}})
+                        - siblings_post = siblings_post.sort((a,b) => { return b.path - a.path})
+                        if siblings_post != null && siblings_post != undefined 
+                            details 
+                                summary  兄弟記事
+                                .container 
+                                    each post in siblings_post
+                                        - var current = ""
+                                        if post.path == page.path 
+                                            - current = "current"
+                                        a(href=url_for(post.path) class=current)= post.title
+                        - var child_posts = group_page_list.filter(element => element.path.split("/").length === post_base_path.length + 2) // 一つ階層が深いものを探す
+                        - var child_reg = new RegExp("^" + post_base_path.join("/") + "/" ) // 同じディレクトリにあるものを探すためのやつ
+                        - child_posts = child_posts.filter(element => element.path.match(child_reg) != undefined) // 同じディレクトリ以下にあるやつを探す
+                        if child_posts != null && child_posts != undefined 
+                            if child_posts.length > 0
+                                details 
+                                    summary  子記事
+                                    .container
+                                        each post in child_posts
+                                            a(href=url_for(post.path) class=current)= post.title
+            div(class="col s12 m9")
+                .content
+                    hr
+                    .row 
+                        - var col_set = "col s12"
+                        if page.stand
+                            div(class="col s12 m4 stand")
+                                    .sticky
+                                        p
+                                            a(href=url_for(page.stand.replace(".png",".webp")) class="glightbox" data-gallery="stand") 
+                                                img(src=url_for(page.stand.replace(".png",".webp")), alt="")
+                            - col_set = "col s12 m8"
+                        div(class=col_set)
+                            .description
+                                if page.aka 
+                                    p.aka= page.aka
+                                h1= page.title
+                                hr
+                                if page.serif 
+                                    .serif
+                                        .balloon-left
+                                            p!= page.serif
+                                != page.excerpt
+                                if page.enemy_rank
+                                    div(class="enemy-rank danger-" + page.enemy_rank.danger)
+                                        p= "危険度ランク：" + page.enemy_rank.danger
+                                        p
+                                            if page.enemy_rank.description != null
+                                                - var desc = page.enemy_rank.description
+                                                - desc = desc.split("　")
+                                                each line in desc 
+                                                    span= line
+                                - var page_id = page.path 
+                                - page_id = page_id.replace(/\//g,"") +"_"
+                                div(class="row like-list")
+                                    each like in theme.likebtns
+                                        .s3
+                                            button(type="submit" class="newiine_btn" data-iinename=page_id + like)
+                                                span.material-icons= like
+                                                span.newiine_count
+                        div(class="col s12")
+                            if page.profile
+                                - var profile = page.profile
+                                - var keys = Object.keys(profile)
+                                each key in keys
+                                    details
+                                        summary= key
+                                        table(class="striped highlight")
+                                            thead
+                                            tbody 
+                                                each data, label in profile[key]
+                                                    if data != null
+                                                        tr
+                                                            th(scope="row")= label
+                                                            td 
+                                                                - data = data.split("　")
+                                                                each text in data
+                                                                    span= text
+                            != page.more
+                            if page.related.character 
+                                details
+                                    summary 関連キャラクター
+                                    table 
+                                        tbody 
+                                            each relation , character in page.related.character
+                                                if relation != null
+                                                    tr
+                                                        th(scope="row")
+                                                            - var path = site.pages.data.find(element => element.title === character)
+                                                            if path
+                                                                a(href=url_for(path.path))= character 
+                                                            else 
+                                                                span= character
+                                                        td 
+                                                            - relation = relation.split("　")
+                                                            each text in relation 
+                                                                span= text
+                            if page.refs 
+                                .refs
+                                    details
+                                        summary イラスト設定資料集
+                                        .row
+                                            each ref in page.refs 
+                                                - ref = ref.replace(".png",".webp")
+                                                div(class="col s4 m3")
+                                                    a(href=url_for(ref) class="glightbox" data-gallery="chara-ref-gallery") 
+                                                        img(src=url_for(ref), alt="")
+                            - var related = false
+                            - var name_cat = site.categories.findOne({"name": page.title})
+                            - var group_cat_data = site.categories.data 
+                            - var is_group_cat= false
+                            - var group_cat = []
+                            each group in group_cat_data 
+                                if group.name.indexOf(page.group) != -1
+                                    - group_cat.push(group)
+                                    - is_group_cat = true
+                            - var name_tag = site.tags.findOne({"name": page.title})
+                            - var related_cat = page.related.cats
+                            if name_cat || name_tag || related_cat || is_group_cat
+                                details 
+                                    summary 関連作品
+                                        - var cat_url_base = "categories/"
+                                    if name_cat || is_group_cat
+                                        h3 カテゴリで探す
+                                        ul 
+                                            if name_cat
+                                                li 
+                                                    a(href=url_for(name_cat.path))= name_cat.name 
+                                            if is_group_cat
+                                                each group in group_cat
+                                                    li
+                                                        a(href=url_for(group.path))= group.name 
+                                    if name_tag 
+                                        h3 タグで探す
+                                        ul 
+                                            li
+                                                a(href=url_for(name_tag.path))= name_tag.name 
+                                    if related_cat
+                                        h3 関連シリーズ
+                                        ul 
+                                            each cat in related_cat
+                                                li
+                                                    a(href=url_for(cat_url_base + cat))= cat
+                            - var character_list = site.pages.data.filter(element => element.group === page.group) // 同じグループの記事を表示
+                            - character_list = character_list.filter(element=> element.path != page.path)
+                            if character_list.length > 0
+                                h2 関連記事
+                                .related-page
+                                    div(class="row" style="gap:1rem")
+                                        each post in character_list
+                                            div(class="s12 m6")
+                                                div(class="row" style="gap:1rem")
+                                                    div(class="col s4")
+                                                        a(href=url_for(post.path)) 
+                                                            if post.cover 
+                                                                img(src=url_for(post.cover.replace(".png",".webp")), alt="")
+                                                            else 
+                                                                span NO IMG
+                                                    div(class="col s8")
+                                                        a(href=url_for(post.path))
+                                                            p= post.title
+                                                        p= truncate(strip_html(post.excerpt),{length:20})
+                                hr

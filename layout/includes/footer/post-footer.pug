@@ -1,0 +1,19 @@
+.post-about
+    .container 
+        h2= page.title 
+        span= full_date(page.date,'YYYY年 MMMM Do hh:mm')
+        div(class="row like-list")
+            - var page_id = page.path 
+            - page_id = page_id.replace(/\//g,"") +"_"
+            each like in theme.likebtns
+                .s3
+                    button(type="submit" class="newiine_btn" data-iinename=page_id + like)
+                        span.material-icons= like
+                        span.newiine_count
+        .excerpt
+            != page.excerpt
+        if page.tags
+            ul.tag-cloud
+                each tag in page.tags.data
+                    li
+                        a(href=url_for(tag.path))= "# " + tag.name 

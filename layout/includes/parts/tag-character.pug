@@ -1,0 +1,26 @@
+- var tags = page.tags.data 
+- var all_pages = site.pages.data.filter( element => element.path.indexOf("characters") > -1)
+- var character_pages = []
+
+each tag in tags 
+    - var tag_name = tag.name
+    - var character_page = all_pages.find(element => element.title === tag_name)
+    if character_page != null && character_page != undefined 
+        - character_pages.push(character_page)
+
+if character_pages.length > 0
+    .post-character-list
+        details(open)
+            summary 登場キャラクター
+            .container
+                p ※記事があるキャラクターのみ
+                .row 
+                    each character in character_pages
+                            div(class="col s12 m6 l4")
+                                a(href=url_for(character.path) class="chara-icon")
+                                    if character.cover != null && character.cover != undefined 
+                                        img(src=url_for(character.cover.replace("png","webp")), alt="")
+                                    else
+                                        p= NoIMG
+                                a(href=url_for(character.path)) 
+                                    p.character-name= character.title

@@ -1,0 +1,33 @@
+extends includes/onecolumn.pug
+
+block page_content
+    .container
+        .post-type-list
+            - var page_type = page.type 
+            - var post_list = series_data = site.posts.filter(element => element.layout === page_type).data.sort((a, b) => a.date - b.date)
+            - var post_date_list = {}
+            each post in post_list 
+                - var year = String(time(post.date,'YYYY'))
+                - var array = post_date_list[year]
+                if array == undefined 
+                    - array = []
+                - array.push(post)
+                - post_date_list[year] = array
+            h1= page.title 
+            
+            input( type="text" id="myListsInput" onkeyup="textSearch('input#myListsInput','ul#myLists','li','.post-data')" placeholder="検索したい言葉を入力してください。")
+            each year in Object.keys(post_date_list)
+                - var year_post_list = post_date_list[year]
+                h3= year + "年"
+                ul(id="myLists")
+                    each post in post_date_list[year]
+                        li 
+                            .category
+                                a(href=url_for(post.categories.data[0].path))
+                                    span(class="material-icons") folder
+                                    span= " " + post.categories.data[0].name
+                            .post-data
+                                a(href=url_for(post.path))= post.title
+                                    if post.hiragana 
+                                        span(style="display:none;")= post.hiragana
+                                span.date= full_date(post.date,'MMMM Do') 

@@ -1,0 +1,74 @@
+
+- var pageTitle = page.title || config.subtitle || ''
+- if (is_archive()) pageTitle = 'Archives'
+- if (is_tag()) pageTitle = 'Tag: ' + page.tag
+- if (is_category()) pageTitle = 'Category: ' + page.category
+- if (is_month()) pageTitle += ': ' + page.month + '/' + page.year
+- if (is_year()) pageTitle += ': ' + page.year
+- pageTitle += ' | ' + config.title
+- if (is_home()) pageTitle = config.title
+
+doctype html
+html(lang=config.language)
+  head
+    meta(charset='UTF-8')
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title= pageTitle
+    - var ver = full_date(new Date()).replace(/[^0-9]/g,'')
+    if theme.HeadCDN !== undefined && theme.HeadCDN.length > 0
+      each url in theme.HeadCDN
+        link(rel='stylesheet', href=url_for(url))
+    if theme.stylesheets !== undefined && theme.stylesheets.length > 0
+      each url in theme.stylesheets
+        if url.indexOf("?Ver=") > -1
+          - url += ver
+        link(rel='stylesheet', href=url_for(url))
+    meta(property="og:url" content=full_url_for(page.path))
+    meta(property="og:title" content=pageTitle)
+    - var page_type = "website"
+    if is_post 
+      - page_type = "article"
+    meta(property="og:type" content=page_type)
+    - var page_description = config.description
+    if page.more 
+      - page_description = strip_html(page.excerpt)
+    meta(property="og:description" content=page_description)
+    meta(property="name" content=truncate(page_description,{length: 90}))
+    - var ogp_img = null 
+    if theme.logo 
+      - ogp_img = theme.logo 
+    if theme.ogp 
+      - ogp_img = theme.ogp 
+    if page.cover
+      - ogp_img = page.cover 
+    if page.ogp 
+      - ogp_img = page.ogp
+    - ogp_img =ogp_img.replace(".png",".webp")
+    meta(property="og:image" content=full_url_for(ogp_img))
+    meta(name="twitter:card" content="summary_large_image")
+    meta(name="twitter:site" content="@" + config.twitter)
+    meta(property="og:site_name" content=config.title)
+    meta(property="og:locale" content="ja_JP")
+    meta(name="robots" content="noai")
+    meta(name="robots" content="noimageai")
+  - var yumetype = "YZ1"
+  if theme.yume.default_mode 
+    - yumetype = theme.yume.default_mode
+  if page.yumetype 
+    - yumetype = page.yumetype
+    
+  body(class=yumetype)
+    block content
+    include footer/footer.pug
+    if page.yumename 
+        - name_len = page.yumename.length
+        - var shokiYZ = "'ユーザー名"
+        each data in page.yumename 
+            - shokiYZ += "," + data
+        if name_len == 1
+            - shokiYZ += ',,'
+        else if name_len == 2
+            - shokiYZ += ','
+        - shokiYZ += "'"
+        - var shoki = "shoki" + yumetype
+        script var #{shoki} = #{shokiYZ}

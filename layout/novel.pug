@@ -1,0 +1,12 @@
+extends post.pug
+
+block post_content
+    include includes/parts/tag-character.pug
+    include includes/parts/alice.pug
+    div(id="snv-app")
+        div(id="snv-loading" class="snv-loader-wrapper")
+            div.snv-loading
+                span Loading...
+        div(id="novel-body")
+            h1(id="nvl-title")= page.title
+            != page.more

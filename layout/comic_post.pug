@@ -1,0 +1,17 @@
+extends post.pug
+
+block post_content 
+    .comics-page
+        .container
+            - var path = ["comics"]
+            - var series_posts = site.posts.data.filter(element => { return element.comic_series === page.comic_series})
+            - series_posts = series_posts.sort((a,b) => {return a.date - b.date})
+            - var current_index = series_posts.findIndex(element => element.path === page.path)
+            - path.push(page.comic_series)
+            - path.push(String(current_index + 1))
+            .cover
+                a(href=url_for(path.join("/") + "/index.html") class="aaaa") 
+                    img(src=url_for(path.join("/") + "/1.webp"), alt="")
+            .btn
+                a(href=url_for(path.join("/") + "/index.html") ) 読む
+    hr

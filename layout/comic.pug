@@ -1,0 +1,170 @@
+doctype html
+html(lang="ja")
+  head
+    meta(charset="UTF-8")
+    title
+    meta(name="viewport", content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1")
+    link(href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.css" rel="stylesheet")
+    link(href=url_for("/images/style.css") rel="stylesheet")
+    link(href=url_for("/css/comi_style.css") rel="stylesheet")
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+    meta(name="robots" content="noai")
+    meta(name="robots" content="noimageai")
+    - var author = config.author
+    - comic_setting = page.comic_setting 
+    if comic_setting.author != undefined && comic_setting.author != null 
+        - author = comic_setting.author
+    - author = "'" + author + "'"
+    - var posts = site.posts.data
+    - var path = page.path 
+    - var series = path.split("/")[1]
+    - var index = path.split("/")[2]
+    - posts = posts.filter(element => {return element.comic_series === series})
+    - posts = posts.sort((a,b) => {return a.date - b.date})
+    - index = Number(index)
+    - var current_post = posts[index - 1]
+    - var current_post_path = url_for(current_post.path)
+    - var title =  current_post.title + " | " + config.title 
+    if current_post.categories.data.length > 0
+        - title = "【" + current_post.categories.data[0].name +  "】 "  + current_post.title + " | " + config.title 
+    - var before_post = null 
+    - var after_post = null 
+    if index > 1
+        - var paths = ["comics"]
+        - paths.push(path.split("/")[1])
+        - paths.push(String(index - 1))
+        - paths.push("index.html")
+        - before_post = paths.join("/")
+    if index < posts.length
+        - var paths = ["comics"]
+        - paths.push(path.split("/")[1])
+        - paths.push(String(index + 1))
+        - paths.push("index.html")
+        - after_post = paths.join("/")
+    script.
+      /** 入力ここから **/
+      var page = #{comic_setting.page}; //ページ数
+      var imgtype = "webp"; //画像の拡張子
+      var title = #{"'" + title  + "'"}; //タイトル名
+      var site = #{"'" + current_post_path + "'"}; //サイトのURL
+      var copy = #{author}; //作者名
+      var display = #{comic_setting.display}; //左ページ始まりは「0」、右ページ始まりは「1」
+      /* *ここまで **/
+      
+      $(function(){
+      $("title,h1").text(title);
+      $(".o_button").attr("onClick", "location.href='" + site + "'");
+      $(".copy").text(copy);
+      for(var i=1; i<=page; i++){
+      $('#last_page').before('<div class="c_i"><div><img data-lazy="' + i + '.' + imgtype + '" src="/images/load.gif"></div></div>'); 
+      }
+      
+      /**長すぎるからh1の方のタイトル改行したいって時var/コメントアウト解除して編集**/
+      //$("h1").html("サンプル<br>サンプル");
+      
+      });
+  body
+    // 漫画表示ゾーンここから
+    .slider(dir="rtl")
+      div(id="first_page")
+      div(id="last_page")
+        div(class="last_page_in", dir="ltr")
+          div
+            // 最終ページフリー追加ゾーンここから
+            // 最終ページフリー追加ゾーンここまで
+          h1
+          small Copyright &copy; 
+            span.copy
+            | All Rights Reserved
+            // 最終ページにボタンを追加する場合は以下をコメントアウト解除して編集
+            //
+            p
+                if after_post != undefined && after_post != null
+                    a(class="button" href=url_for(after_post)) 次の話へ
+                if before_post != undefined && before_post != null
+                    a(class="button" href=url_for(before_post)) 前の話へ
+
+          p
+            input(type="button", value="もう一度読む", class="button b_button")
+            input(type="button", value="サイトへ戻る", class="button o_button orange")
+    // 漫画表示ゾーンここまで
+    // メニューここから
+    div(class="menu_box")
+      div(class="menu_button") menu
+      div(class="menu_show")
+        h1
+        small Copyright &copy; 
+          span.copy
+          | All Rights Reserved
+        p
+            if after_post != undefined && after_post != null
+                a(class="button" href=url_for(after_post)) 次の話へ
+            if before_post != undefined && before_post != null
+                a(class="button" href=url_for(before_post)) 前の話へ
+
+        p
+          input(type="button", value="操作ヘルプ", class="button p_button")
+          input(type="button", value="全画面表示", class="button g_button sp_none")
+          input(type="button", value="拡大モード", class="button z_button")
+          input(type="button", value="サイトへ戻る", class="button o_button orange")
+        .slick-counter
+          span.current
+          | /
+          span.total
+        .dots(dir="rtl")
+        div(class="menu_button close") close
+    // メニューここまで
+    // 操作ヘルプここから
+    .help
+      div(class="help_in")
+        div(class="help_img")
+          img(src=url_for("/images/help.png") width="300")
+        p 【画面操作】
+        // class="sp_none"でPC以外だと非表示・class="pc_none"でPCだと非表示
+        ul(class="pc_none")
+          li &#9312;中央ダブルタップ
+            span ……拡大モード
+          li &#9312;中央フリック
+            span ……次のページ・前のページ
+          li &#9313;両端タップ
+            span ……次のページ・前のページ
+          li &#9314;ページャータップ
+            span ……ページ移動
+        ul(class="sp_none")
+          li &#9312;中央スライド
+            span ……次のページ・前のページ
+          li &#9313;両端クリック
+            span ……次のページ・前のページ
+          li &#9314;ページャークリック
+            span ……ページ移動
+        p(class="sp_none") 【キーボード操作】
+        ul(class="sp_none")
+          li ←キー……次のページ
+          li →キー……前のページ
+          li ↓キー……メニュー表示
+          li ↑キー……拡大モード
+          li F11キー……全画面表示
+    // 操作ヘルプここまで
+    // 初期表示ガイドここから
+    .guide
+      .slide-arrow.prev-arrow
+        span
+      div(class="guide_yazirusi")
+        .icon
+        .text
+      div(class="guide_operation")
+        // ガイド内容ここから
+        img(src=url_for("/images/guide.png") width="190")
+        br
+        | 横へ読みます
+        // ガイド内容ここまで
+      .slide-arrow.next-arrow
+        span
+    // 初期表示ガイドここまで
+    // 拡大モードここから
+    .zoomwrap
+    div(class="zoom_reset z_button")
+      div(class="zr_in") 拡大モードを解除
+    // 拡大モードここまで
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js")
+    script(src=url_for("/js/comic.js"))

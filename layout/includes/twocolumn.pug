@@ -1,0 +1,13 @@
+extends layout.pug
+
+block content
+    include header/navbar.pug
+    if page.onecolumn
+        block page_content
+    else
+        .row 
+            div(class="col s12 m9")
+                block page_content
+            div(class="col s12 m3")
+                .sidebar
+                    include sidebar/sidebar.pug

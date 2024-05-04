@@ -1,0 +1,121 @@
+extends includes/onecolumn.pug
+
+block page_content
+  - var categoriesList = list_categories({ show_count: false })
+  - var tagsList = list_tags({ show_count: false })
+
+    if !is_year()
+      .container
+        h1 アーカイブ
+
+        details(open)
+          summary  カテゴリーリスト
+          if categoriesList 
+            input( type="text" id="myCatInput" onkeyup="textSearch('input#myCatInput','ul#myCats','li','a')" placeholder="検索したい言葉を入力してください。")
+            .tag-list 
+              - categoriesList = site.categories.data
+              - var sortCategoriesList = []
+              each category in categoriesList
+                -  sortCategoriesList.push({"path":category.path,"name":category.name})
+              - categoriesList = sortCategoriesList.sort((a, b) => {const nameA = a.name.toUpperCase();const nameB = b.name.toUpperCase();if (nameA < nameB) {return -1;}if (nameA > nameB) {return 1;}return 0;})
+              ul(id="myCats")
+                each category in categoriesList
+                  li 
+                    a(href=url_for(category.path) class="btn outlined")= "# " + category.name
+          else
+            p None.
+
+        details(open)
+          summary  タグ
+          if tagsList
+            input( type="text" id="myTagInput" onkeyup="textSearch('input#myTagInput','ul#myTags','li','a')" placeholder="検索したい言葉を入力してください。")
+            .tag-list
+              - tagsList = site.tags.data
+              - var sortTagsList = []
+              each tag in tagsList
+                - sortTagsList.push({"path":tag.path,"name":tag.name})
+              - tagsList = sortTagsList.sort((a, b) => {const nameA = a.name.toUpperCase();const nameB = b.name.toUpperCase();if (nameA < nameB) {return -1;}if (nameA > nameB) {return 1;}return 0;})
+              ul(id="myTags")
+                each tag in tagsList 
+                  li 
+                    a(href=url_for(tag.path) class="btn outlined")= "# " + tag.name
+                      if site.pages.data.filter(element => element.title === tag.name)[0]
+                        - var hiragana = site.pages.data.filter(element => element.title === tag.name)[0]
+                        - hiragana = hiragana.hiragana 
+                        span(style="display:none;")= hiragana 
+
+          else
+            p None.
+        
+        details(open)
+          summary  年月別
+          if list_archives()
+            .list-archives
+              - var archive_list = list_archives({show_count: false})
+              - archive_list = archive_list.split("</li>")
+              - var archiveDict = {}
+              each nakami in archive_list 
+                - var nakami = nakami.replace(/(<([^>]+)>)/gi, '');
+                if nakami != ""
+                  - nakami = nakami.split("月 ")
+                  - monthList = archiveDict[nakami[1]]
+                  if monthList == undefined 
+                    - monthList = []
+                  - monthList.push(nakami[0])
+                  - archiveDict[nakami[1]] = monthList
+              for year in Object.keys(archiveDict)
+                h3= year + "年"
+                ul
+                  each month in archiveDict[year].sort()
+                    li 
+                      - var url_month = String(month) 
+                      if month < 10
+                        - url_month = "0" + String(month)
+                      a(href=url_for("/archives/" + String(year) + "/" + url_month +"/") class="btn outlined")= month + "月"
+
+          else
+            p None.
+        div(style="display:flex;gap:1rem; margin: 1rem 0;")
+          a(href=url_for("/illusts") class="btn") イラスト一覧
+          a(href=url_for("/comics") class="btn") 漫画一覧
+          a(href=url_for("/novels") class="btn") 小説一覧
+    else
+      .recent-post
+        .container
+          h1= page.year + "年" + page.month + '月'
+          div(class="row" style="gap:10px")
+              each post in page.posts.data 
+                  div(class="col s12 m6")
+                      - var post_type = ["ブログ", "#999"]
+                      if post.layout == "illust"
+                          - post_type = ["イラスト", "var(--primary-color)"]
+                      if post.layout == "novel"
+                          - post_type = ["小説", "var(--font-link-color)"]
+                      if post.layout == "comic_post"
+                          - post_type = ["漫画","var(--secondary-color)"]
+                      span(class="post-type" style="background-color:" + post_type[1])= post_type[0]
+                      .post 
+                          - var aspect = ""
+                          if post.layout == "illust"
+                              - aspect = "aspect-ratio: 1 / 1"
+                          if post.layout != "post"
+                              div(class="post-cover" style=aspect)
+                                  a(href=url_for(post.path)) 
+                                      if post.cover 
+                                          img(src=url_for(post.cover.replace(".png",".webp")), alt="", srcset="")
+                                      else 
+                                          p NO IMG
+                          .post-description
+                              a(href=url_for(post.path)) 
+                                  h3= post.title
+                              p= truncate(strip_html(post.excerpt),{length:50})
+                              if post.tags
+                                  .tag-list
+                                      ul 
+                                          each tag in post.tags.data
+                                              li 
+                                                  a(href=url_for(tag.path))= "# " + tag.name 
+                              .post-date
+                                  span= full_date(post.date,'YYYY年 MMMM Do hh:mm')
+                              a(href=url_for(post.path)) 続きを読む 
+      include includes/parts/pagenator.pug

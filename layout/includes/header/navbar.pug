@@ -1,0 +1,19 @@
+nav(class="navbar z-depth-0")
+    .nav-wrapper
+        if theme.logo 
+            a(href=url_for("/"))
+                img(src=url_for(theme.logo.replace(".png",".webp")), class="brand-logo") 
+        else
+            a(href=url_for("/") class="brand-logo") マモノもえ！
+        a(href="#" data-target="mobile-demo" class="sidenav-trigger")
+            i.material-icons menu
+        ul(id="nav-mobile" class="right hide-on-med-and-down")
+            each url, label in theme.menu
+                li
+                    a(href=url_for(url) class="navbar-item")= label
+
+ul(class="sidenav" id="mobile-demo")
+    each url, label in theme.menu
+        li
+            a(href=url_for(url) class="navbar-item")= label
+    

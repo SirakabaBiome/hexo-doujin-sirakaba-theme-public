@@ -1,0 +1,57 @@
+language: ja
+
+logo: /imgs/logo.webp # ロゴ
+ogp: /imgs/ogp.webp # デフォルトOGP
+
+warning: ここに警告文
+no_jump: https://www.google.com/ # 利用規約を承認しなかった場合に飛ばされるページ
+
+menu:
+  Home: /
+  Terms of Service: /tos
+  About: /about
+  Archives: /archives
+  Wiki: /wikis
+
+wiki:
+  Characters: /characters
+  Words: /words
+
+yume:
+  default_mode: YZ1
+  default_name:
+    - ユーザー名
+    - 名前
+    - 名字
+
+# ここからいじらない
+
+HeadCDN:
+- https://fonts.googleapis.com/icon?family=Material+Icons
+
+stylesheets:
+- /.newiine_app/newiine.css
+- /css/materialize.css
+- /css/snviewer.min.css
+- /css/glightbox.min.css
+- /css/hexo-doujin-sirakaba.css?Ver=
+
+scripts:
+- /js/glightbox.min.js
+- /js/jquery-3.7.1.min.js
+- /js/jquery.cookie-1.4.1.min.js
+- /.newiine_app/newiine.js
+- /js/alice.js
+- /js/materialize.min.js
+- /js/snviewer.min.js
+- /js/hexo-doujin-sirakaba.js?Ver=
+
+# ここまでいじらない
+
+likebtns:
+- favorite_border
+- star_border
+- thumb_up
+- pets
+
+

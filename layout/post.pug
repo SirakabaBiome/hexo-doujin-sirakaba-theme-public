@@ -1,0 +1,17 @@
+extends includes/twocolumn.pug
+
+block page_content
+  div(class="noenter-name" style="display:none")
+      .container
+          h2 利用規約に同意しないと読めません
+          include includes/parts/agetos.pug
+  .main-content 
+    div(class="content" style="display:none;")
+      if page.layout == "post"
+        .container
+          != page.content
+        hr
+      else
+        block post_content
+      include includes/footer/post-footer.pug
+      include includes/parts/post-pagenator.pug

@@ -1,0 +1,56 @@
+
+:root{
+    --background-color: #F5F5F5; /* 全体的な背景色変更 */
+    --surface-color: #eee;
+  
+    --font-color-main: #333;
+    --font-color-medium: #555;
+    --font-color-disabled: #777;
+  
+    --font-on-primary-color-main: #eee;
+    --font-on-primary-color-dark-main: rgba(255, 255, 255, 0.87);
+    --font-on-primary-color-dark-medium: rgba(255, 255, 255, 0.60);
+    --font-on-primary-color-medium: rgba(0, 0, 0, 0.56);
+    --font-on-primary-color-disabled: rgba(0, 0, 0, 0.38);
+  
+    --hover-color: rgba(0, 0, 0, 0.1);
+    --focus-color: rgba(255, 255, 255, 0.12);
+    --focus-color-solid: #424242;
+  
+    --background-color-disabled: rgba(255, 255, 255, 0.12);
+    --background-color-level-4dp: rgba(255, 255, 255, 0.09);
+    --background-color-level-16dp-solid: #262626;
+    --background-color-card: var(--surface-color);
+    --background-color-slight-emphasis: rgba(0, 0, 0, 0.05);
+  
+    --separator-color: #424242; /* borders between components */
+  
+    --error-color: #CF6679;
+  
+    --slider-track-color: rgba(255, 255, 255, 0.26);
+    --switch-thumb-off-color: #bababa;
+  
+    --primary-color: var(--font-color-main); /* 全体的な色変更 */
+    --primary-color-dark: #438DC7;
+    --primary-color-numeric: #00D4E9;
+    --primary-color-raised-hover-solid: #00bdcf;
+    --primary-color-raised-focus-solid: ;
+    
+  
+    --secondary-color: #70B52C;
+    --secondary-color-hover-solid: #6ed138;
+    --secondary-color-focus-solid: #F5FF61;
+    --secondary-container-color: var(--background-color); /* Navbarの背景色変更 */
+    --font-on-secondary-container-color: var(--font-color-main); /* Navbarの文字色変更 */
+  
+    --md_sys_color_on-surface: var(--font-color-main);
+    --md-sys-color-primary-light: var(--primary-color);
+  
+  
+    --content-border: var(--font-color-disabled) solid 1px;
+    --font-link-color:  var(--primary-color-dark);
+    --font-link-hover-color: var(--primary-color-raised-hover-solid);
+    --card-color:#fff;
+    --hero-background:var(--background-color); /* トップページのタイトルロゴ部分の背景変更 */
+    --background:var(--background-color); /* 全体の背景変更 */
+  }

@@ -1,0 +1,46 @@
+-
+    const pagination = {
+                prev_text: '<i class="material-icons">chevron_left</i>',
+                next_text: '<i class="material-icons">chevron_right</i>',
+                escape: false,
+                current_class: "active",
+                force_prev_next: true
+                }
+-
+
+- var total = page.total 
+- var current = page.current 
+
+.center
+    ul.pagination
+        if current == 1
+            li.disabled 
+                a(href="#") 
+                    i.material-icons chevron_left
+        else 
+            li.waves-effect
+                a(href=url_for(page.prev_link))
+                    i.material-icons chevron_left
+        - var page_url_orig = page.path.replace("index.html","")
+        if current > 1
+            - page_url_orig = page_url_orig.replace("page/" + String(current) + "/","")
+        - for (var i = 0; i < total; i++)
+            - var num = i + 1
+            - var page_num_url = page_url_orig
+            if num > 1
+                - page_num_url  += "page/" +String(num) + "/"
+            - page_num_url += "index.html"
+            if num == current 
+                li.active
+                    a= num
+            else 
+                li.waves-effect 
+                    a(href=url_for(page_num_url))= num
+        if current == total
+            li.disabled 
+                a(href="#") 
+                    i.material-icons chevron_right
+        else 
+            li.waves-effect
+                a(href=url_for(page.next_link))
+                    i.material-icons chevron_right
